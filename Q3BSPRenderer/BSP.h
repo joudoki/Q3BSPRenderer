@@ -38,9 +38,9 @@ typedef struct {
 class BSP {
 private:
     BSP() {}
-	~BSP() {}
+    ~BSP() {}
 
-	// Hide/disable copy constructor to prevent accidental copies
+    // Hide/disable copy constructor to prevent accidental copies
     BSP(const BSP& other);
     
 public:
