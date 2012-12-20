@@ -7,6 +7,8 @@
 
 #include <GL/glfw.h>
 
+#include "BSP.h"
+
 using namespace std;
 
 int defaultWidth    = 800; // px
@@ -41,77 +43,6 @@ public:
         
         // Return average inter-arrival time reciprocal (i.e. fps)
         return 1.0 / average;
-    }
-};
-
-#define BSP_MAGIC "IBSP"
-#define BSP_LUMP_COUNT 17
-
-enum BSPLumpIndex {
-    LUMP_ENTITIES    = 0,
-    LUMP_TEXTURES    = 1,
-    LUMP_PLANES      = 2,
-    LUMP_NODES       = 3,
-    LUMP_LEAFS       = 4,
-    LUMP_LEAFFACES   = 5,
-    LUMP_LEAFBRUSHES = 6,
-    LUMP_MODELS      = 7,
-    LUMP_BRUSHES     = 8,
-    LUMP_BRUSHSIDES  = 9,
-    LUMP_VERTS       = 10,
-    LUMP_MESHES      = 11,
-    LUMP_EFFECTS     = 12,
-    LUMP_FACES       = 13,
-    LUMP_LIGHTMAPS   = 14,
-    LUMP_LIGHTVOLS   = 15,
-    LUMP_VSIDATA     = 16
-};
-
-typedef struct {
-    int offset;
-    int length;
-} BSPLumpEntry_t;
-
-class BSPHeader {
-public:
-    char magic[5];
-    int version;
-    
-    BSPLumpEntry_t lumps[BSP_LUMP_COUNT];
-};
-
-class BSP {
-private:
-    BSPHeader header;
-
-    BSP() {}
-    BSP(const BSP& other);
-    
-public:
-    static BSP* fromStream(istream& is) {
-        BSP* bsp = new BSP();
-        BSPHeader* header = new BSPHeader();
-        
-        is.read(header->magic, 4 * sizeof(char));
-        if (strcmp(header->magic, BSP_MAGIC) != 0) {
-            printf("Magic Mismatch! Got \"%s\", expecting \"%s\"!\n", header->magic, BSP_MAGIC);
-            return NULL;
-        }
-        
-        is >> header->version;
-        printf("%s v%d\n", header->magic, header->version);
-        
-        is.read((char*) header->lumps, BSP_LUMP_COUNT * sizeof(BSPLumpEntry_t));
-        for (size_t i=0; i<BSP_LUMP_COUNT; ++i) {
-            printf(
-                "Lump [%d] - [%d,%d)\n",
-                i,
-                header->lumps[i].offset,
-                header->lumps[i].offset + header->lumps[i].length
-            );
-        }
-        
-        return bsp;
     }
 };
 
